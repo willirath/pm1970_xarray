@@ -7,6 +7,7 @@ dependencies:
   - dask
   - numpy
   - netcdf4
+  - scipy
   - xarray
   ##############
   - pytest
