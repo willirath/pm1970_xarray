@@ -19,7 +19,7 @@ quiet = false
 verbose = 1
 
 [tool.isort]
-known_third_party = ["numpy", "setuptools", "xarray"]
+known_third_party = ["numpy", "setuptools", "scipy", "xarray"]
 
 [tool.pytest.ini_options]
 addopts = "-v"
