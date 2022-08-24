@@ -1,7 +1,9 @@
+import datetime
+
 import numpy as np
 import xarray as xr
 
-from pm1970_xarray.slab_model import coriolis_parameter_f
+from pm1970_xarray.slab_model import coriolis_parameter_f, resample_data
 
 
 def test_coriolis_parameter_sign():
@@ -29,3 +31,37 @@ def test_coriolis_parameter_xarray_attrs():
     assert f.name == "f"
     assert f.unit == "1/s"
     assert f.long_name == "coriolis_parameter"
+
+
+def test_time_interpolation():
+    """Simple time-interpolation test."""
+    # dummy data
+    data = xr.DataArray(
+        [0, 1],
+        dims=("time",),
+        name="data",
+        coords={
+            "time": np.array(
+                [
+                    datetime.datetime(2022, 1, 1, 0, 0, 0),
+                    datetime.datetime(2022, 1, 2, 0, 0, 0),
+                ]
+            ),
+        },
+    )
+
+    # interpolate
+    data_interp = resample_data(
+        data,
+        dt_seconds=3600,
+    )
+
+    # check first and last value
+    assert data_interp.sel(time=data.time.isel(time=0)) == data.isel(time=0)
+    assert data_interp.sel(time=data.time.isel(time=-1)) == data.isel(time=-1)
+
+    # check constant increase
+    np.testing.assert_almost_equal(data_interp.diff("time").std(), desired=0, decimal=3)
+    np.testing.assert_almost_equal(
+        data_interp.diff("time").mean(), desired=1 / 24.0, decimal=3
+    )
