@@ -1,7 +1,6 @@
 import numpy as np
 import xarray as xr
 
-
 from pm1970_xarray.slab_model import coriolis_parameter_f
 
 
