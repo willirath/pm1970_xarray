@@ -1,4 +1,7 @@
+from hashlib import new
+
 import numpy as np
+import xarray as xr
 
 
 def coriolis_parameter_f(latitude):
@@ -51,19 +54,23 @@ def resample_data(dobj, dt_seconds=3600):
     dt_timedelta = np.timedelta64(int(dt_seconds), "s")
 
     # transform data time axis to numbers
-    dobj.coords["time"] = original_time_axis / dt_timedelta
+    dobj = dobj.copy()
+    dobj.coords["time"] = (
+        original_time_axis - original_time_axis.isel(time=0)
+    ) / dt_timedelta
 
     # construct target time axis
     new_time_axis = xr.DataArray(
         np.arange(
             original_time_axis.isel(time=0).data,
-            original_time_axis.isel(time=-1).data,
+            original_time_axis.isel(time=-1).data + dt_timedelta,
             dt_timedelta,
         ),
         dims=("time",),
         name="time",
     )
-    new_time_axis_numeric = new_time_axis / dt_timedelta
+    new_time_axis_numeric = (new_time_axis - new_time_axis.isel(time=0)) / dt_timedelta
+    new_time_axis_numeric.coords["time"] = new_time_axis_numeric
 
     # interpolate
     dobj_interp = dobj.interp_like(new_time_axis_numeric)
