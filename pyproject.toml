@@ -1,0 +1,30 @@
+[build-system]
+build-backend = "setuptools.build_meta"
+requires = ["setuptools>=42", "wheel", "setuptools_scm[toml]>=3.4"]
+
+[tool.setuptools_scm]
+
+[tool.interrogate]
+color = true
+exclude = ["setup.py", "docs", "tests"]
+fail-under = 95
+ignore-init-method = true
+ignore-init-module = false
+ignore-magic = false
+ignore-module = false
+ignore-private = true
+ignore-property-decorators = true
+ignore-semiprivate = true
+quiet = false
+verbose = 1
+
+[tool.isort]
+known_third_party = ["cftime", "numpy", "pandas", "pkg_resources", "pytest", "setuptools", "xarray"]
+
+[tool.pytest.ini_options]
+addopts = "-v"
+minversion = "6.0"
+# only test the root level, otherwise it picks up the tests of the project template
+testpaths = [
+  "tests",
+]

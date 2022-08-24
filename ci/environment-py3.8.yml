@@ -1,0 +1,16 @@
+name: test_env_pm1970_xarray
+channels:
+  - conda-forge
+dependencies:
+  - python=3.8
+  ############## These will have to be adjusted to your specific project
+  - dask
+  - numpy
+  - netcdf4
+  - xarray
+  ##############
+  - pytest
+  - pip:
+      - codecov
+      - pytest-cov
+      - coverage[toml]
